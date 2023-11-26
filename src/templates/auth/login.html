@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block title %} Login {% endblock title %}
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock customCSS %}
+{% block content %}
+<form class="form-singin" action="/login" method="POST">
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    <div class="form-floating">
+      <input type="text" class="form-control" id="floatingInput" name="user_name" placeholder="user name">
+      <label for="floatingInput">User Name</label>
+    </div>
+    <div class="form-floating">
+      <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
+      <label for="floatingPassword">Password</label>
+    </div>
+    <div class="form-register">
+      <a href="/register">Register as new user</a>
+    </div>
+    <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+
+  </form>
+{% endblock content %}

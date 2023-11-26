@@ -1,0 +1,93 @@
+{% extends 'layout.html' %}
+{% block title %} Register {% endblock title %}
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock customCSS %}
+{% block content %}
+<form action="{{ url_for('main.register') }}" method="POST" class="form-horizontal">
+        <h1 class="h3 mb-3 fw-normal">Register</h1>
+        <div class="form-group">
+            <label for="user_name" class="col-md-2 control-label">Username</label>
+            <div class="col-md-10">
+                <input type="text" id="user_name" name="user_name" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="full_name" class="col-md-2 control-label">Full name</label>
+            <div class="col-md-10">
+                <input type="text" id="full_name" name="full_name" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email" class="col-md-2 control-label">Email</label>
+            <div class="col-md-10">
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="col-md-2 control-label">Password</label>
+            <div class="col-md-10">
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password" class="col-md-2 control-label">Confirm Password</label>
+            <div class="col-md-10">
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                <span id='message'></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10 submit-button">
+                <button type="submit" class="btn btn-primary" id="registerButton">Register</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block customJS %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('#confirm_password').on('keyup', function () {
+        var password = $('#password').val();
+        var confirmPassword = $('#confirm_password').val();
+
+        if (confirmPassword == '') {
+            $('#message').html('').css('color', 'none');
+            $('#registerButton').prop('disabled', true);
+        } else if (password == confirmPassword) {
+            $('#message').html('Passwords match').css('color', 'green');
+            $('#registerButton').prop('disabled', false);
+        } else {
+            $('#message').html("Passwords doesn't match").css('color', 'red');
+            $('#registerButton').prop('disabled', true);
+        }
+    });
+    //Email validation to know if the email is already registered
+    $('#email').on('keyup', function () {
+        //check if #email is a valid format before continue
+        var email = $('#email').val();
+        var emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+        if(emailRegex.test(email)){   
+            $.ajax({
+                url: `/user/${email}`,
+                type: 'GET',
+                success: function (response) {
+                    console.log('before: ',response)
+                    // if the response is a number, it means that the email is already registered
+                    if (response === 'exist') {
+                        console.log('after: ', response);
+                        $('#message').html('Email already exists').css('color', 'red');
+                        $('#registerButton').prop('disabled', true);
+                    } else {
+                        $('#message').html('').css('color', 'none');
+                        $('#registerButton').prop('disabled', false);
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
