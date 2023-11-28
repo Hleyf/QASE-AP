@@ -8,7 +8,12 @@ class UserService:
 
     @classmethod
     def create_user(cls, user):
+        print("user: ", vars(user))
         try:
+            if current_user is not None and current_user.is_authenticated:
+                user.created_by = current_user.id
+            else:
+                user.created_by = 'system'
             hashed_password = generate_password_hash(user.password, method='pbkdf2:sha256')
             user.password = hashed_password  # Use the User object passed in as a parameter
             db.session.add(user)
@@ -105,7 +110,9 @@ class UserService:
     @classmethod
     def login(cls):
         try:
+            print("request.form['user_name']: ", request.form['user_name'])
             user = User.query.filter_by(user_name=request.form['user_name']).first()
+            print("user: ", user)
             if user and user.check_password(request.form['password']):
                 return user                
         except Exception as e:

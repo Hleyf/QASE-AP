@@ -13,18 +13,15 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String, nullable=False, unique=False)
     email = db.Column(db.String, nullable=False, unique=True)
     role = db.Column(db.String, nullable=False, unique=False)
-    #  created_by has a one to many relationship with user
-    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    created_by = db.relationship('User', backref=db.backref('created_users', lazy='dynamic'), foreign_keys=[created_by_id])
-    updated_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    updated_by = db.relationship('User', backref=db.backref('updated_users', lazy='dynamic'), foreign_keys=[updated_by_id])
+    created_by = db.Column(db.String, nullable=False, unique=False)   
     created_at = db.Column(db.DateTime, nullable=False, unique=False)
+    updated_by = db.Column(db.Integer, nullable=True, unique=False) 
     updated_at = db.Column(db.DateTime, nullable=True, unique=False)
 
     
     
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.user_name
 
     def set_password(self, password):
         try:

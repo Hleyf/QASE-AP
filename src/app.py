@@ -37,7 +37,7 @@ def create_app():
         db.create_all()
         # Create the initial admin user
         from initial_data import create_admin
-          
+        create_admin()
     app.register_blueprint(main)
     
     return app
