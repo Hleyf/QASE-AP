@@ -1,9 +1,12 @@
 
 {% extends 'layout2.html' %}
 {% block title %}Edit{% endblock %}
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user-edit.css') }}">
+{% endblock customCSS %}
 {% block content %}
-<form action="{{ url_for('main.register') }}" method="POST" class="form-horizontal">
-    <h1 class="h3 mb-3 fw-normal">Register</h1>
+<form action="{{ url_for('main.update_user', id=user.id) }}" method="POST" class="form-horizontal">
+    <h1 class="">Edit</h1>
     <div class="form-group">
         <label for="user_name" class="col-md-2 control-label">Username</label>
         <div class="col-md-10">
@@ -41,16 +44,38 @@
         <div class="form-group">
             <label for="role" class="col-md-2 control-label">User Role</label>
             <div class="col-md-10">
-                <select name="role" id="role" class="form-control" value="{{user.role}}">
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
+                <select name="role" id="role" class="form-control">
+                    <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
                 </select>
+
+                </select>
+            </div>
         </div>
     {% endif %}
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10 submit-button">
-            <button type="submit" class="btn btn-primary" id="registerButton">Register</button>
+        <div class="col-md-10 action-buttons">
+            <div class="row justify-content-end">
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary" id="updateButton">Update</button>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('main.home') }}" class="btn btn-danger">Cancel</a>
+                </div>
+            </div>
         </div>
     </div>
 </form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Disable the upload button on page load
+    $('#updateButton').prop('disabled', true);
+
+    // Enable the upload button when any form field is changed
+    $('form :input').change(function() {
+        $('#updateButton').prop('disabled', false);
+    });
+});
+</script>
 {% endblock content %}

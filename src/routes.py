@@ -74,9 +74,15 @@ def update_user(id):
         is_user = current_user.id == user.id
         return render_template('pages/edit-modal.html', is_admin=is_admin, is_user = is_user, user=user)
     elif request.method == 'POST':
-        user = service.update_user(id)
-        if user:
+        user_id = service.update_user(id)
+        if user_id:
             return redirect(url_for('main.home'))
         else:
             return render_template('pages/edit-modal.html', error="Invalid credentials")
+        
+@main.route('/users/<id>/delete', methods=['DELETE'])
+def delete_user(id):
+    UserService.delete_user(id)
+    return redirect(url_for('main.home', methods=['GET']))
+
     
