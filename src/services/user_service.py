@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from flask_login import current_user
 from models import db, User
 from flask import request
@@ -92,12 +92,13 @@ class UserService:
                 user.password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
 
             db.session.commit()
+            return user_id
         except Exception as e:
             db.session.rollback()
             raise e
     
     @classmethod
-    def delete_user(cls,db, user_id):
+    def delete_user(cls,user_id):
 
         try:
             user = User.query.get(user_id)
