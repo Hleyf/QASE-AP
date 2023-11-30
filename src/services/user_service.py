@@ -84,11 +84,14 @@ class UserService:
             user.user_name = request.form['user_name'] if request.form['user_name'] not in ('', None) else user.user_name
             user.full_name = request.form['full_name'] if request.form['full_name'] not in ('', None) else user.full_name
             user.email = request.form['email'] if request.form['email'] not in ('', None) else user.email
-            user.role = request.form['role'] if request.form['role'] not in ('', None) else user.role
+            
+            if 'role' in request.form:
+                user.role = request.form['role']
+            
             user.updated_at = datetime.now()
             user.updated_by = current_user.id
 
-            if current_user.id == user_id and request.form['password'] not in ('', None):
+            if current_user.id == int(user_id) and request.form['password'] not in ('', None):
                 user.password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
 
             db.session.commit()
@@ -102,6 +105,11 @@ class UserService:
 
         try:
             user = User.query.get(user_id)
+            if user is not None:
+                db.session.delete(user)
+                db.session.commit()
+            else:
+                print(f"No user found with id {user_id}")
             db.session.delete(user)
             db.session.commit()
         except Exception as e:

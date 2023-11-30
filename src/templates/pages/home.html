@@ -9,9 +9,7 @@
         <th scope="col">User Name</th>
         <th scope="col">Email</th>
         <th scope="col">Role</th>
-        {% if is_admin %}
-            <th scope="col">Actions</th>            
-        {% endif %}
+        <th scope="col">Actions</th>            
       </tr>
     </thead>
     <tbody>
@@ -22,12 +20,14 @@
           <td>{{user.user_name}}</td>
           <td>{{user.email}}</td>
           <td>{{user.role}}</td>
-          {% if is_admin %}
           <td>
+            {% if user.id == logged_user_id or is_admin %}          
             <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit</a>
+            {% endif %}
+            {% if is_admin %}
             <a href="{{ url_for('main.delete_user', id=user.id )}}" class="btn btn-danger delete-btn">Delete</a>
+            {% endif %}
           </td>
-          {% endif %}
         </tr>
         {% endfor %}
     </tbody>
@@ -40,7 +40,13 @@ $(document).ready(function() {
         e.preventDefault();
         $.ajax({
             url: $(this).attr('href'),
-            type: 'DELETE'
+            type: 'DELETE',
+            success: function(result) {
+              console.log("DELETE request was successful");
+              if(result.success){
+                location.reload();
+              }
+            }
         });
     });
 });
