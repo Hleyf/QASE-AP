@@ -1,6 +1,14 @@
 {% extends 'layout2.html' %}
 {% block title %} Home {% endblock title %}
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock customCSS %}
 {% block content %}
+{% if is_admin %}
+<div class="new-btn">
+  <a href="/register" class="btn btn-success">New User</a>
+</div>
+{% endif %}
 <table class="table table-hover">
     <thead>
       <tr>

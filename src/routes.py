@@ -37,19 +37,19 @@ def register():
             password=request.form['password'],
             full_name=request.form['full_name'],
             email=request.form['email'],
-            role='user',
+            role=request.form['role'] if 'role' in request.form else 'user',
             created_at=datetime.now(),
             created_by= None
         )
         with current_app.app_context():
-            user = service.create_user(form_user)
+            user_id = service.create_user(form_user)
         
-        if user:
-            return redirect(url_for('main.login'))
-        else:
+        if not user_id:
             return render_template('auth/register.html', error="Invalid credentials")
-    elif request.method == 'GET' and 'user_id' not in session:
-        return render_template('auth/register.html')
+
+        return redirect(url_for('main.home')) if current_user.is_authenticated else redirect(url_for('main.login'))
+    is_admin = current_user is not None and current_user.is_authenticated and current_user.role == 'admin'
+    return render_template('auth/register.html', is_admin=is_admin)
 
 @main.route('/home')
 @login_required
