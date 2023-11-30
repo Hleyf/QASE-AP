@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, session, current_app
 from flask_login import login_required, current_user, login_user
 from models import User
 from services import UserService
@@ -58,7 +58,7 @@ def home():
     users = service.get_all_users()
     is_admin = current_user.role == 'admin'
 
-    return render_template('pages/home.html', users=users, is_admin=is_admin)
+    return render_template('pages/home.html', users=users, is_admin=is_admin, logged_user_id=current_user.id)
     
 #Get method to return user.id by email
 @main.route('/user/<email>', methods=['GET'])
@@ -83,6 +83,6 @@ def update_user(id):
 @main.route('/users/<id>/delete', methods=['DELETE'])
 def delete_user(id):
     UserService.delete_user(id)
-    return redirect(url_for('main.home', methods=['GET']))
+    return jsonify({'success': True})
 
     
