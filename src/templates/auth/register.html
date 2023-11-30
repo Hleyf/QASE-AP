@@ -34,8 +34,24 @@
             <label for="confirm_password" class="col-md-2 control-label">Confirm Password</label>
             <div class="col-md-10">
                 <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
-                <span id='message'></span>
             </div>
+        </div>
+        <!-- Display role form if the current user is an administrator-->
+        {% if is_admin %}
+        <div class="form-group">
+            <label for="role" class="col-md-2 control-label">User Role</label>
+            <div class="col-md-10">
+                <select name="role" id="role" class="form-control">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                </select>
+            </div>
+        </div>
+    {% endif %}
+        <div class="form-group col-md-10">
+            <span id='message'></span>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10 submit-button">
@@ -49,18 +65,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
-    $('#confirm_password').on('keyup', function () {
+    $('#password, #confirm_password').on('keyup', function () {
         var password = $('#password').val();
         var confirmPassword = $('#confirm_password').val();
 
-        if (confirmPassword == '') {
+        if (password == '' || confirmPassword == '') {
             $('#message').html('').css('color', 'none');
             $('#registerButton').prop('disabled', true);
         } else if (password == confirmPassword) {
             $('#message').html('Passwords match').css('color', 'green');
             $('#registerButton').prop('disabled', false);
         } else {
-            $('#message').html("Passwords doesn't match").css('color', 'red');
+            $('#message').html("Passwords don't match").css('color', 'red');
             $('#registerButton').prop('disabled', true);
         }
     });
