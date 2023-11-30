@@ -18,7 +18,7 @@ class UserService:
             user.password = hashed_password  # Use the User object passed in as a parameter
             db.session.add(user)
             db.session.commit()
-            return user
+            return user.id
         except Exception as e:
             print("Error in create_user: ", e)  # Print the error message
             db.session.rollback()
