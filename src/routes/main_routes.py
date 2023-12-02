@@ -5,20 +5,20 @@ from models import User
 from services import UserService
 
 
-main = Blueprint('main', __name__)
-service = UserService()
+main_routes = Blueprint('main', __name__)
+user_service = UserService()
 
-@main.route('/')
+@main_routes.route('/')
 def index():
     if 'user' not in session:
         return redirect(url_for('main.login'))        
     else:
         return redirect(url_for('main.home'))
 
-@main.route('/login', methods=['GET', 'POST'])
+@main_routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = service.login()
+        user = user_service.login()
         if user:
             login_user(user)
             return redirect(url_for('main.home'))            
@@ -29,7 +29,7 @@ def login():
     elif request.method == 'GET' and 'user' in session:
         return redirect(url_for('main.home'))
 
-@main.route('/register', methods=['GET', 'POST'])
+@main_routes.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         form_user = User(
@@ -42,47 +42,22 @@ def register():
             created_by= None
         )
         with current_app.app_context():
-            user_id = service.create_user(form_user)
+            user_id = user_service.create_user(form_user)
         
         if not user_id:
             return render_template('auth/register.html', error="Invalid credentials")
 
-        return redirect(url_for('main.home')) if current_user.is_authenticated else redirect(url_for('main.login'))
+        return redirect(url_for('user_routes.users')) if current_user.is_authenticated else redirect(url_for('main.login'))
     is_admin = current_user is not None and current_user.is_authenticated and current_user.role == 'admin'
     return render_template('auth/register.html', is_admin=is_admin)
 
-@main.route('/home')
+@main_routes.route('/home')
 @login_required
 def home():
-    # get all the users from the database
-    users = service.get_all_users()
-    is_admin = current_user.role == 'admin'
-
-    return render_template('pages/home.html', users=users, is_admin=is_admin, logged_user_id=current_user.id)
+    return render_template('pages/home.html')
     
-#Get method to return user.id by email
-@main.route('/user/<email>', methods=['GET'])
-def check_email_availability(email):
-    response = service.get_email_availability(email)
-    return response
 
-@main.route('/users/<id>/edit', methods=['GET','POST'])
-def update_user(id):
-    if request.method == 'GET':
-        is_admin = current_user.role == 'admin'
-        user = service.get_user_by_id(id)
-        is_user = current_user.id == user.id
-        return render_template('pages/edit-modal.html', is_admin=is_admin, is_user = is_user, user=user)
-    elif request.method == 'POST':
-        user_id = service.update_user(id)
-        if user_id:
-            return redirect(url_for('main.home'))
-        else:
-            return render_template('pages/edit-modal.html', error="Invalid credentials")
-        
-@main.route('/users/<id>/delete', methods=['DELETE'])
-def delete_user(id):
-    UserService.delete_user(id)
-    return jsonify({'success': True})
+
+
 
     
