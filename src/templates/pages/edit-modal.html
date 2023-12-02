@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/user-edit.css') }}">
 {% endblock customCSS %}
 {% block content %}
-<form action="{{ url_for('main.update_user', id=user.id) }}" method="POST" class="form-horizontal">
+<form action="{{ url_for('user_routes.update_user', id=user.id) }}" method="POST" class="form-horizontal">
     <h1 class="">Edit</h1>
     <div class="form-group">
         <label for="user_name" class="col-md-2 control-label">Username</label>

@@ -2,7 +2,8 @@ from flask import Flask
 from flask_login import LoginManager
 from models import db
 from config import config
-from routes import main
+from routes.main_routes import main_routes
+from routes.user_routes import user_routes
 import secrets
 
 
@@ -38,7 +39,8 @@ def create_app():
         # Create the initial admin user
         from initial_data import create_admin
         create_admin()
-    app.register_blueprint(main)
+    app.register_blueprint(main_routes)
+    app.register_blueprint(user_routes)
     
     return app
 
