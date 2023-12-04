@@ -27,7 +27,13 @@ class UserService:
     @classmethod
     def get_all_users(cls):
         try:
-            return User.query.all()
+            page = request.args.get('page', 1, type=int)
+            sort = request.args.get('sort', 'id', type=str)
+            order = request.args.get('order', 'asc', type=str)
+            per_page = request.args.get('per_page', 5, type=str)
+            per_page = int(per_page)
+
+            return User.query.order_by(getattr(User, sort).asc() if order == 'asc' else getattr(User, sort).desc()).paginate(page=page, per_page=per_page)
         except Exception as e:
             raise e
 
