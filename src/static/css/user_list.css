@@ -1,0 +1,36 @@
+
+.new-btn {
+    display: flex;
+    position: relative;
+    justify-content: flex-end;
+    top: 2.2em;
+    z-index: 100;}
+
+
+.list-footer{
+    display: flex;
+   flex: content;
+   justify-content: flex-end;
+}
+
+.custom-select {
+    position: relative;
+    right: 2em;
+}
+
+.add-btn {
+    width: 30px;
+  height: 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  h3 {
+    position: relative;
+    top: -23px;
+    left: -12px;
+    font-size: 3em;
+    font-weight: bold;
+  }
+
+
+}
+

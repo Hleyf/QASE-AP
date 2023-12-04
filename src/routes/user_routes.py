@@ -10,7 +10,6 @@ service = UserService()
 @user_routes.route('/users')
 @login_required
 def users():
-    # get all the users from the database
     users = service.get_all_users()
     is_admin = current_user.role == 'admin'
 
