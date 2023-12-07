@@ -1,0 +1,10 @@
+{% if is_edit %}
+  {% set modal_title = 'Editar tarea' %}
+  {% set form_action = url_for('edit_task') %}
+  {% set form_fields = [{'id': 'task_id', 'label': 'ID de la tarea', 'name': 'task_id', 'type': 'text', 'value': task.id}, {'id': 'task_name', 'label': 'Nombre de la tarea', 'name': 'task_name', 'type': 'text', 'value': task.name}] %}
+{% else %}
+  {% set modal_title = 'Crear tarea' %}
+  {% set form_action = url_for('create_task') %}
+  {% set form_fields = [{'id': 'task_name', 'label': 'Nombre de la tarea', 'name': 'task_name', 'type': 'text', 'value': ''}] %}
+{% endif %}
+{% include 'modal.html' with modal_id='taskModal', modal_title=modal_title, form_action=form_action, form_fields=form_fields %}
