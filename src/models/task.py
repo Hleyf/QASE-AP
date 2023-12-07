@@ -13,7 +13,7 @@ class Task(db.Model):
     description = db.Column(db.String(256), nullable=True)
     status = db.Column(db.String(128), nullable=False, default='pending')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    created_by = db.Column(db.Srting, nullable=False, unique=False)
+    created_by = db.Column(db.String, nullable=False, unique=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
