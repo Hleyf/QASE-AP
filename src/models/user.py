@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, nullable=False, unique=False)
     updated_by = db.Column(db.Integer, nullable=True, unique=False) 
     updated_at = db.Column(db.DateTime, nullable=True, unique=False)
+    tasks = db.relationship('Task', backref='user', lazy=True)
 
     
     
