@@ -12,7 +12,7 @@ def tasks():
     tasks = service.get_tasks()
     return render_template('pages/task_list.html', tasks=tasks)
 
-@task_routes.route('/tasks/<id>/edit', methods=['PUT'])
+@task_routes.route('/tasks/<id>/update', methods=['PUT'])
 def update_task(id):
     task = service.get_task_by_id(id)
     return render_template('pages/edit-modal.html', task=task)
@@ -26,7 +26,7 @@ def create_task():
     return jsonify({'success': False})
 
 @task_routes.route('/tasks/<id>/edit', methods=['POST'])
-def update_task(id):
+def edit_task(id):
     task = service.update_task(id)
     if task.id:
         return jsonify({'success': True})
