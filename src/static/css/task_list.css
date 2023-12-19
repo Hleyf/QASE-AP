@@ -1,0 +1,18 @@
+.list-footer{
+    display: flex;
+   flex: content;
+   justify-content: flex-end;
+}
+
+.custom-select {
+    position: relative;
+    right: 2em;
+}
+
+.add-btn {
+  padding: 0%;
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  }
