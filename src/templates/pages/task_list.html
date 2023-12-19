@@ -4,9 +4,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/task_list.css') }}">
 {% endblock customCSS %}
 {% block content %}
-<div class="new-btn">
-  <a class="btn btn-success add-btn" data-toggle="modal" data-target="#taskModal" onclick="setModalMode(false)"><h3>+</h3></a>
-</div>
+<div style="display: grid; justify-content: right; position: relative; top: 2em;">
+  <button onclick="window.location.href='/register'" class="btn btn-success add-btn">
+    <i class="fas fa-plus"></i>
+  </button>
+  </div>
 <table class="table table-hover">
     <thead>
       <tr>
