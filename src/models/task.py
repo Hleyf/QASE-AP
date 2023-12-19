@@ -1,9 +1,7 @@
 
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
-
-db = SQLAlchemy()
+from extensions import db
 
 
 class Task(db.Model):
@@ -12,7 +10,7 @@ class Task(db.Model):
     title = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(256), nullable=True)
     status = db.Column(db.String(128), nullable=False, default='pending')
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     created_by = db.Column(db.String, nullable=False, unique=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

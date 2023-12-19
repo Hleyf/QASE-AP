@@ -2,14 +2,19 @@ from datetime import datetime
 from models.task import Task
 from models import db
 from flask_login import current_user
+from flask import request
 
 class TaskService:
     
     @classmethod
     def get_tasks(cls):
         try:
-            tasks = Task.query.all()
-            return tasks
+            page = request.args.get('page', 1, type=int)
+            sort = request.args.get('sort', 'id', type=str)
+            order = request.args.get('order', 'asc', type=str)
+            per_page = request.args.get('per_page', 5, type=str)
+            per_page = int(per_page)
+            return Task.query.order_by(getattr(Task, sort).asc() if order == 'asc' else getattr(Task, sort).desc()).paginate(page=page, per_page=per_page)
         except Exception as e:
             raise e
 

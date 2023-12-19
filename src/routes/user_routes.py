@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, logout_user
 from services import UserService
 
 
@@ -43,3 +43,9 @@ def update_user(id):
 def delete_user(id):
     UserService.delete_user(id)
     return jsonify({'success': True})
+
+@user_routes.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.login'))

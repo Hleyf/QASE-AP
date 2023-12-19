@@ -4,11 +4,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/task_list.css') }}">
 {% endblock customCSS %}
 {% block content %}
-{% if is_admin %}
-<div class="new-btn">
-  <a href="/register" class="btn btn-success">New Task</a>
-</div>
-{% endif %}
+<div style="display: grid; justify-content: right; position: relative; top: 2em;">
+  <button onclick="window.location.href='/register'" class="btn btn-success add-btn">
+    <i class="fas fa-plus"></i>
+  </button>
+  </div>
 <table class="table table-hover">
     <thead>
       <tr>
@@ -22,7 +22,7 @@
     </thead>
     <tbody>
         {% for task in tasks %}
-        <tr>
+        <tr data-toggle="modal" data-target="#taskModal" onclick="setModalMode(true, task)">
           <th scope="row">{{task.id}}</th>
           <td>{{task.title}}</td>
           <td>{{task.status}}</td>
@@ -36,6 +36,40 @@
         {% endfor %}
     </tbody>
   </table>
+  <form method="get" action="{{ url_for('user_routes.users') }}" class="input-group mb-3">
+    <div class="order-select">  
+      <span>Order By: </span>
+      <select style="margin-left: 1em;" name="sort" onchange="this.form.submit()">
+        <option value="id" {% if request.args.get('sort') == 'id' %}selected{% endif %}>Id</option>
+        <option value="title" {% if request.args.get('sort') == 'title' %}selected{% endif %}>title</option>
+        <option value="user_name" {% if request.args.get('sort') == 'user_name' %}selected{% endif %}>User Name</option>
+      </select>
+    </div>
+      <input type="hidden" name="order" value="{{ 'asc' if request.args.get('order') != 'asc' else 'desc' }}">
+      <button type="submit" style="background: none; border: none;">
+        <i class="{{ 'fas fa-arrow-up' if request.args.get('order') != 'asc' else 'fas fa-arrow-down' }}"></i>
+      </button>
+    <div class="list-footer">
+    <div class="custom-select">
+      <span>Page Size: </span>
+      <select style="margin-left: 10px;" name="per_page" onchange="this.form.submit()">
+        <option value="5" {% if request.args.get('per_page') == '5' %}selected{% endif %}>5</option>
+        <option value="10" {% if request.args.get('per_page') == '10' %}selected{% endif %}>10</option>
+        <option value="15" {% if request.args.get('per_page') == '15' %}selected{% endif %}>15</option>
+      </select>
+    </div>
+  
+      <div class="pagination">
+        {% if tasks.has_prev %}
+        <a href="{{ url_for('task_routes.tasks', page=tasks.prev_num, sort=request.args.get('sort'), order=request.args.get('order')) }}" style="text-decoration: none; color: inherit;"> Previous&nbsp; </a>
+        {% endif %}
+        <span>Page {{ tasks.page }} of {{ tasks.pages }}</span>
+        {% if tasks.has_next %}
+        <a href="{{ url_for('task_routes.tasks', page=tasks.next_num, sort=request.args.get('sort'), order=request.args.get('order')) }}" style="text-decoration: none; color: inherit;"> &nbsp;Next </a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   //We need to use AJAX to send a DELETE request to the server since forms only support GET and POST
@@ -54,5 +88,27 @@ $(document).ready(function() {
         });
     });
 });
+
+function setModalMode(isEdit, task = null) {
+  // Cambia el modo del modal
+  document.getElementById('is_edit').value = isEdit;
+
+  // Si es modo de edición, establece los valores del formulario
+  if (isEdit && task) {
+    document.getElementById('task_id').value = task.id;
+    document.getElementById('task_name').value = task.name;
+    document.getElementById('task_description').value = task.description;
+    document.getElementById('task_status').value = task.status;
+    document.getElementById('task_user_name').value = task.name;
+
+  } else {
+    // Si es modo de creación, limpia los valores del formulario
+    document.getElementById('task_id').value = '';
+    document.getElementById('task_name').value = '';
+    document.getElementById('task_description').value = '';
+    document.getElementById('task_status').value = '';
+    document.getElementById('task_user_name').value = '';
+  }
+}
 </script>
 {% endblock content %}

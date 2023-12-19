@@ -61,28 +61,6 @@ class UserService:
             db.session.rollback()
             raise e
 
-    # @classmethod
-    # def update_user(cls,user_id):
-    #     try:
-    #         user_db = User.query.get(user_id)
-    #         user = User(
-    #             id=user_id, 
-    #             user_name=request.form['user_name'], 
-    #             full_name=request.form['full_name'], 
-    #             email=request.form['email'], 
-    #             role=request.form['role'], 
-    #             created_at=user_db.created_at, 
-    #             created_by=user_db.created_by,
-    #             updated_at=datetime.now(),
-    #             updated_by= current_user.id
-    #             )
-    #         if request.form['password'] != '':
-    #             user.password = generate_password_hash(user.password, method='pbkdf2:sha256')
-    #         db.session.merge(user)
-    #         db.session.commit()
-    #     except Exception as e:
-    #         db.session.rollback()
-    #         raise e
     @classmethod
     def update_user(cls, user_id):
         try:
