@@ -13,29 +13,53 @@
       integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
     <!-- Custom CSS -->
     {% block customCSS %} {% endblock %}
   </head>
 
   <body class="text-center">
     <div class="col-md-12">
-        <div class="container">
-        <div class="row" >
-            {% include 'common/nav.html' %}
-        </div>
-        <div class="row" style="margin-top:25px;">
+      <div class="container">
+        <div class="row">{% include 'common/nav.html' %}</div>
+        <div class="row" style="margin-top: 25px">
           {% block content %} {% endblock %}
         </div>
       </div>
-      
-    </div>
+    {% include 'modal.html' %}
+    {% block customJS %} {% endblock %}
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
       crossorigin="anonymous"
-    ></script>
-    {% block customJS %} {% endblock %}
+    >
+      function openModal(modalId, data = null, isEdit = false) {
+        fetch('/modals/' + modalId + '.html')
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('modalContainer').innerHTML = html;
+            // Populate the modal with data if necessary
+            if (data) {
+              for (var key in data) {
+                var input = document.querySelector('#' + modalId + ' input[name="' + key + '"]');
+                if (input) {
+                  input.value = data[key];
+                }
+              }
+            }
+            // Show the modal7
+            console.log('modalId', modalId);
+            var modal = document.getElementById(modalId);
+            modal.style.display = 'block';
+          });
+        }
+    </script>
   </body>
 </html>

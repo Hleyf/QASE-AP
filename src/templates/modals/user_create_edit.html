@@ -1,0 +1,19 @@
+{% if is_edit %}
+  {% set modal_title = 'Edit User' %}
+  {% set form_action = url_for('user_routes.update_user', id=user.id) %}
+  {% set form_fields = [
+    {'id': 'user_id', 'label': 'User ID', 'name': 'user_id', 'type': 'text', 'value': user.id},
+    {'id': 'user_name', 'label': 'Username', 'name': 'user_name', 'type': 'text', 'value': user.user_name},
+    {'id': 'user_email', 'label': 'Email', 'name': 'user_email', 'type': 'email', 'value': user.email},
+    {'id': 'user_role', 'label': 'Role', 'name': 'user_role', 'type': 'text', 'value': user.role}
+  ] %}
+{% else %}
+  {% set modal_title = 'Create User' %}
+  {% set form_action = url_for('user_routes.create_user') %}
+  {% set form_fields = [
+    {'id': 'user_name', 'label': 'Username', 'name': 'user_name', 'type': 'text', 'value': ''},
+    {'id': 'user_email', 'label': 'Email', 'name': 'user_email', 'type': 'email', 'value': ''},
+    {'id': 'user_role', 'label': 'Role', 'name': 'user_role', 'type': 'text', 'value': ''}
+  ] %}
+{% endif %}
+{% include 'modal.html' with modal_id='userModal', modal_title=modal_title, form_action=form_action, form_fields=form_fields %}
