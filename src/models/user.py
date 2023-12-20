@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash,generate_password_hash
 from extensions import db
@@ -35,3 +34,15 @@ class User(db.Model, UserMixin):
         except Exception as e:
             raise e
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_name': self.user_name,
+            'email': self.email,
+            'role': self.role,
+            'created_by': self.created_by,
+            'created_at': self.created_at,
+            'updated_by': self.updated_by,
+            'updated_at': self.updated_at,
+            'full_name': self.full_name
+    }

@@ -15,7 +15,12 @@ def users():
 
     return render_template('pages/user_list.html', users=users, is_admin=is_admin, logged_user_id=current_user.id)
 
-
+@user_routes.route('/users/<id>/json', methods=['GET'])
+@login_required
+def get_user_as_json(id):
+    user = service.get_user_by_id(int(id))
+    loquesea = jsonify(user.to_dict())
+    return loquesea
 #Get method to return user.id by email
 @user_routes.route('/user/<email>', methods=['GET'])
 @login_required
