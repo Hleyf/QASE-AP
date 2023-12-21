@@ -82,7 +82,7 @@
     </div>
   </div>
 </form>
-{% set modal_file = 'modals/user_create_edit.html' %}
+{% include 'modals/user_modal.html' %}
 {% endblock content %}
 {% block customJS %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -126,5 +126,31 @@
       }
     });
   });
+</script>
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+crossorigin="anonymous"
+>
+function openModal(modalId, data = null, isEdit = false) {
+  fetch('/modals/user_modal.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('modalContainer').innerHTML = html;
+      // Populate the modal with data if necessary
+      if (data) {
+        for (var key in data) {
+          var input = document.querySelector('#' + modalId + ' input[name="' + key + '"]');
+          if (input) {
+            input.value = data[key];
+          }
+        }
+      }
+      // Show the modal
+      console.log('modalId', modalId);
+      var modal = document.getElementById(modalId);
+      modal.style.display = 'block';
+    });
+  }
 </script>
 {% endblock %}

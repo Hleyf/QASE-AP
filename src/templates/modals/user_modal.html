@@ -1,0 +1,67 @@
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userModalLabel">{% if is_edit %}Edit User{% else %}Create User{% endif %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% if is_edit %}{{ url_for('user_routes.update_user', id=user.id) }}{% else %}{{ url_for('user_routes.create_user') }}{% endif %}" method="post">
+        <div class="modal-body">
+          {% for field in form_fields %}
+            <div class="form-group">
+              <label for="{{ field.id }}">{{ field.label }}</label>
+              <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" name="{{ field.name }}" value="{{ field.value }}" {% if not is_edit %}readonly{% endif %}>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          {% if is_edit %}
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          {% else %}
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            {% if is_admin %}
+              <button type="button" class="btn btn-primary" onclick="setEditMode(true)">Edit</button>
+            {% endif %}
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  function setEditMode(isEdit) {
+  // Change the is_edit variable
+  var is_edit = isEdit;
+
+  // Update the modal title
+  var modalTitle = document.getElementById('userModalLabel');
+  modalTitle.textContent = is_edit ? 'Edit User' : 'Create User';
+
+  // Update the form action
+  var form = document.querySelector('#userModal form');
+  form.action = is_edit ? '/update_user' : '/create_user'; // Replace with the correct URLs
+
+  // Update the form fields
+  var formFields = document.querySelectorAll('#userModal form input');
+  formFields.forEach(function(field) {
+    field.readOnly = !is_edit;
+  });
+
+  // Update the modal footer
+  var modalFooter = document.querySelector('#userModal .modal-footer');
+  if (is_edit) {
+    modalFooter.innerHTML = `
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    `;
+  } else {
+    modalFooter.innerHTML = `
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+      <button type="button" class="btn btn-primary" onclick="setEditMode(true)">Edit</button>
+    `;
+  }
+}
+</script>
