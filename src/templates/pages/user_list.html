@@ -35,8 +35,8 @@
       <td>{{user.role}}</td>
       <td>
         {% if user.id == logged_user_id or is_admin %}
-        <button type="button" class="btn btn-primary" id="openModalButton"
-          data-modal-file="modals/user_create_edit.html" data-user-id="{{user.id}}">Edit</button>
+        <button type="button" class="btn btn-primary" id="openEditModalButton"
+          onclick="openEditModal('{{user.id}}', true)">Edit</button>
         {% endif %}
         {% if is_admin %}
         <a href="{{ url_for('user_routes.delete_user', id=user.id )}}" class="btn btn-danger delete-btn">Delete</a>
@@ -86,6 +86,7 @@
 {% endblock content %}
 {% block customJS %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
   //We need to use AJAX to send a DELETE request to the server since forms only support GET and POST
   $(document).ready(function () {
@@ -103,11 +104,35 @@
       });
     });
   });
-
-  document.getElementById('openModalButton').addEventListener('click', function () {
-    var modalFile = this.getAttribute('data-modal-file');
-    var userId = this.getAttribute('data-user-id');
-    var isEdit = this.getAttribute('data-is-edit') === 'true';
+  // Add event listener for the "Edit" button 
+  // document.getElementById('openEditModalButton').addEventListener('click', function () {
+  //   var userId = this.getAttribute('data-user-id');
+  //   var isEdit = this.getAttribute('data-modal-isEdit') === 'true';
+  //   $.ajax({
+  //     url: '/users/' + userId + '/json',
+  //     type: 'GET',
+  //     success: function (result) {
+  //       console.log("GET request was successful");
+  //       if (result) {
+  //         console.log(result);
+  //         var user = result;
+  //         $('#modalContent').load('modals/user_modal.html', function () {
+  //           // Pass user and isEdit to the modalFile
+  //           $('#modal').data('user', user);
+  //           $('#modal').data('isEdit', isEdit);
+  //           $('#modal').modal('show');
+  //         });
+  //       }
+  //     }
+  //   });
+  // });
+</script>
+<script>
+    function openEditModal(userId, isEdit) {
+    console.log("Edit button clicked");
+    console.log("User ID: " + userId);
+    console.log("Is Edit: " + isEdit);
+    // Add your logic here to handle the modal opening
     $.ajax({
       url: '/users/' + userId + '/json',
       type: 'GET',
@@ -115,42 +140,15 @@
         console.log("GET request was successful");
         if (result) {
           console.log(result);
-          var user = result;
-          $('#modalContent').load(modalFile, function () {
             // Pass user and isEdit to the modalFile
-            $('#modal').data('user', user);
-            $('#modal').data('isEdit', isEdit);
-            $('#modal').modal('show');
-          });
+          $('#userModal').data('user', result);
+          $('#userModal').data('isEdit', isEdit);
+          $('#userModal').modal('show');
+
+
         }
       }
     });
-  });
+    }
 </script>
-<script
-src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
-integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
-crossorigin="anonymous"
->
-function openModal(modalId, data = null, isEdit = false) {
-  fetch('/modals/user_modal.html')
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('modalContainer').innerHTML = html;
-      // Populate the modal with data if necessary
-      if (data) {
-        for (var key in data) {
-          var input = document.querySelector('#' + modalId + ' input[name="' + key + '"]');
-          if (input) {
-            input.value = data[key];
-          }
-        }
-      }
-      // Show the modal
-      console.log('modalId', modalId);
-      var modal = document.getElementById(modalId);
-      modal.style.display = 'block';
-    });
-  }
-</script>
-{% endblock %}
+{% endblock customJS %}

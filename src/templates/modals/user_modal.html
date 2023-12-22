@@ -7,14 +7,16 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{% if is_edit %}{{ url_for('user_routes.update_user', id=user.id) }}{% else %}{{ url_for('user_routes.create_user') }}{% endif %}" method="post">
+      <form id="userForm" {% if is_edit %}action="{{ url_for('user_routes.update_user', id=user.id) }}"{% endif %} method="post">
         <div class="modal-body">
-          {% for field in form_fields %}
-            <div class="form-group">
-              <label for="{{ field.id }}">{{ field.label }}</label>
-              <input type="{{ field.type }}" class="form-control" id="{{ field.id }}" name="{{ field.name }}" value="{{ field.value }}" {% if not is_edit %}readonly{% endif %}>
-            </div>
-          {% endfor %}
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
         </div>
         <div class="modal-footer">
           {% if is_edit %}
@@ -31,7 +33,24 @@
     </div>
   </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
+  
+  $(document).ready(function() {
+    $('#userModal').on('shown.bs.modal', function () {    
+      // alert('Modal is successfully shown!');
+      var user = $('#userModal').data('user');
+      var is_edit = $('#userModal').data('is_edit');
+      console.log('user:',user);
+      $('#username').val(user.user_name);
+      $('#email').val(user.email);
+      setEditMode(is_edit);
+      // Set the values of other fields as needed
+  })
+});
+
   function setEditMode(isEdit) {
   // Change the is_edit variable
   var is_edit = isEdit;
