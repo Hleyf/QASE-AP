@@ -1,7 +1,7 @@
 {% extends 'layout2.html' %}
 {% block title %} Users {% endblock title %}
 {% block customCSS %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/user_list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user_list.css') }}">
 {% endblock customCSS %}
 {% block content %}
 {% if is_admin %}
@@ -9,91 +9,146 @@
   <button onclick="window.location.href='/register'" class="btn btn-success add-btn">
     <i class="fas fa-plus"></i>
   </button>
-  </div>
+</div>
 {% endif %}
 
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope="col" class="sortable" data-sort="id" data-order="{{ 'asc' if request.args.get('sort') != 'id' or request.args.get('order') != 'asc' else 'desc' }}">#</th>
+      <th scope="col" class="sortable" data-sort="id"
+        data-order="{{ 'asc' if request.args.get('sort') != 'id' or request.args.get('order') != 'asc' else 'desc' }}">#
+      </th>
       <th scope="col">Full Name</th>
       <th scope="col">User Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Role</th>
-        <th scope="col">Actions</th>            
-      </tr>
-    </thead>
-    <tbody>
-      {% for user in users.items %}
-      <tr>
-        <th scope="row">{{user.id}}</th>
-        <td>{{user.full_name}}</td>
-        <td>{{user.user_name}}</td>
-        <td>{{user.email}}</td>
-        <td>{{user.role}}</td>
-        <td>
-          {% if user.id == logged_user_id or is_admin %}          
-          <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit</a>
-          {% endif %}
-          {% if is_admin %}
-          <a href="{{ url_for('user_routes.delete_user', id=user.id )}}" class="btn btn-danger delete-btn">Delete</a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <form method="get" action="{{ url_for('user_routes.users') }}" class="input-group mb-3">
-  <div class="order-select">  
+      <th scope="col">Email</th>
+      <th scope="col">Role</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users.items %}
+    <tr>
+      <th scope="row">{{user.id}}</th>
+      <td>{{user.full_name}}</td>
+      <td>{{user.user_name}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.role}}</td>
+      <td>
+        {% if user.id == logged_user_id or is_admin %}
+        <button type="button" class="btn btn-primary" id="openEditModalButton"
+          onclick="openEditModal('{{user.id}}', true)">Edit</button>
+        {% endif %}
+        {% if is_admin %}
+        <a href="{{ url_for('user_routes.delete_user', id=user.id )}}" class="btn btn-danger delete-btn">Delete</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<form method="get" action="{{ url_for('user_routes.users') }}" class="input-group mb-3">
+  <div class="order-select">
     <span>Order By: </span>
     <select style="margin-left: 1em;" name="sort" onchange="this.form.submit()">
-      <option value="id" {% if request.args.get('sort') == 'id' %}selected{% endif %}>Id</option>
-      <option value="user_name" {% if request.args.get('sort') == 'user_name' %}selected{% endif %}>User Name</option>
-      <option value="role" {% if request.args.get('sort') == 'role' %}selected{% endif %}>Role</option>
+      <option value="id" {% if request.args.get('sort')=='id' %}selected{% endif %}>Id</option>
+      <option value="user_name" {% if request.args.get('sort')=='user_name' %}selected{% endif %}>User Name</option>
+      <option value="role" {% if request.args.get('sort')=='role' %}selected{% endif %}>Role</option>
     </select>
   </div>
-    <input type="hidden" name="order" value="{{ 'asc' if request.args.get('order') != 'asc' else 'desc' }}">
-    <button type="submit" style="background: none; border: none;">
-      <i class="{{ 'fas fa-arrow-up' if request.args.get('order') != 'asc' else 'fas fa-arrow-down' }}"></i>
-    </button>
+  <input type="hidden" name="order" value="{{ 'asc' if request.args.get('order') != 'asc' else 'desc' }}">
+  <button type="submit" style="background: none; border: none;">
+    <i class="{{ 'fas fa-arrow-up' if request.args.get('order') != 'asc' else 'fas fa-arrow-down' }}"></i>
+  </button>
   <div class="list-footer">
-  <div class="custom-select">
-    <span>Page Size: </span>
-    <select style="margin-left: 10px;" name="per_page" onchange="this.form.submit()">
-      <option value="5" {% if request.args.get('per_page') == '5' %}selected{% endif %}>5</option>
-      <option value="10" {% if request.args.get('per_page') == '10' %}selected{% endif %}>10</option>
-      <option value="15" {% if request.args.get('per_page') == '15' %}selected{% endif %}>15</option>
-    </select>
-  </div>
+    <div class="custom-select">
+      <span>Page Size: </span>
+      <select style="margin-left: 10px;" name="per_page" onchange="this.form.submit()">
+        <option value="5" {% if request.args.get('per_page')=='5' %}selected{% endif %}>5</option>
+        <option value="10" {% if request.args.get('per_page')=='10' %}selected{% endif %}>10</option>
+        <option value="15" {% if request.args.get('per_page')=='15' %}selected{% endif %}>15</option>
+      </select>
+    </div>
 
     <div class="pagination">
       {% if users.has_prev %}
-      <a href="{{ url_for('user_routes.users', page=users.prev_num, sort=request.args.get('sort'), order=request.args.get('order')) }}" style="text-decoration: none; color: inherit;"> Previous&nbsp; </a>
+      <a href="{{ url_for('user_routes.users', page=users.prev_num, sort=request.args.get('sort'), order=request.args.get('order')) }}"
+        style="text-decoration: none; color: inherit;"> Previous&nbsp; </a>
       {% endif %}
       <span>Page {{ users.page }} of {{ users.pages }}</span>
       {% if users.has_next %}
-      <a href="{{ url_for('user_routes.users', page=users.next_num, sort=request.args.get('sort'), order=request.args.get('order')) }}" style="text-decoration: none; color: inherit;"> &nbsp;Next </a>
+      <a href="{{ url_for('user_routes.users', page=users.next_num, sort=request.args.get('sort'), order=request.args.get('order')) }}"
+        style="text-decoration: none; color: inherit;"> &nbsp;Next </a>
       {% endif %}
     </div>
   </div>
 </form>
+{% include 'modals/user_modal.html' %}
+{% endblock content %}
+{% block customJS %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
   //We need to use AJAX to send a DELETE request to the server since forms only support GET and POST
-$(document).ready(function() {
-    $('.delete-btn').click(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: $(this).attr('href'),
-            type: 'DELETE',
-            success: function(result) {
-              console.log("DELETE request was successful");
-              if(result.success){
-                location.reload();
-              }
-            }
-        });
+  $(document).ready(function () {
+    $('.delete-btn').click(function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: $(this).attr('href'),
+        type: 'DELETE',
+        success: function (result) {
+          console.log("DELETE request was successful");
+          if (result.success) {
+            location.reload();
+          }
+        }
+      });
     });
-});
+  });
+  // Add event listener for the "Edit" button 
+  // document.getElementById('openEditModalButton').addEventListener('click', function () {
+  //   var userId = this.getAttribute('data-user-id');
+  //   var isEdit = this.getAttribute('data-modal-isEdit') === 'true';
+  //   $.ajax({
+  //     url: '/users/' + userId + '/json',
+  //     type: 'GET',
+  //     success: function (result) {
+  //       console.log("GET request was successful");
+  //       if (result) {
+  //         console.log(result);
+  //         var user = result;
+  //         $('#modalContent').load('modals/user_modal.html', function () {
+  //           // Pass user and isEdit to the modalFile
+  //           $('#modal').data('user', user);
+  //           $('#modal').data('isEdit', isEdit);
+  //           $('#modal').modal('show');
+  //         });
+  //       }
+  //     }
+  //   });
+  // });
 </script>
-{% endblock content %}
+<script>
+    function openEditModal(userId, isEdit) {
+    console.log("Edit button clicked");
+    console.log("User ID: " + userId);
+    console.log("Is Edit: " + isEdit);
+    // Add your logic here to handle the modal opening
+    $.ajax({
+      url: '/users/' + userId + '/json',
+      type: 'GET',
+      success: function (result) {
+        console.log("GET request was successful");
+        if (result) {
+          console.log(result);
+            // Pass user and isEdit to the modalFile
+          $('#userModal').data('user', result);
+          $('#userModal').data('isEdit', isEdit);
+          $('#userModal').modal('show');
+
+
+        }
+      }
+    });
+    }
+</script>
+{% endblock customJS %}
