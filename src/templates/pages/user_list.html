@@ -34,10 +34,8 @@
       <td>{{user.email}}</td>
       <td>{{user.role}}</td>
       <td>
-        {% if user.id == logged_user_id or is_admin %}
         <button type="button" class="btn btn-primary" id="openEditModalButton"
-          onclick="openEditModal('{{user.id}}', true)">Edit</button>
-        {% endif %}
+          onclick="openViewModal('{{user.id}}')">View</button>
         {% if is_admin %}
         <a href="{{ url_for('user_routes.delete_user', id=user.id )}}" class="btn btn-danger delete-btn">Delete</a>
         {% endif %}
@@ -128,27 +126,36 @@
   // });
 </script>
 <script>
-    function openEditModal(userId, isEdit) {
-    console.log("Edit button clicked");
-    console.log("User ID: " + userId);
-    console.log("Is Edit: " + isEdit);
-    // Add your logic here to handle the modal opening
-    $.ajax({
-      url: '/users/' + userId + '/json',
-      type: 'GET',
-      success: function (result) {
-        console.log("GET request was successful");
-        if (result) {
-          console.log(result);
-            // Pass user and isEdit to the modalFile
-          $('#userModal').data('user', result);
-          $('#userModal').data('isEdit', isEdit);
-          $('#userModal').modal('show');
+    function openViewModal(userId) {
+      console.log("Edit button clicked");
+      console.log("User ID: " + userId);
+      //get logged user 
+      $.ajax({
+        url: '/current_user_role',
+        type: 'GET',
+        success: function (role) {
+          console.log("Logged user role: " + role);
 
+          var isAdmin = (role === 'admin');
+          console.log("Is Admin: " + isAdmin);
 
+          // Add your logic here to handle the modal opening
+          $.ajax({
+            url: '/users/' + userId + '/json',
+            type: 'GET',
+            success: function (result) {
+              console.log("GET request was successful");
+              if (result) {
+                console.log(result);
+                // Pass user and isEdit to the modalFile
+                $('#userModal').data('user', result);
+                $('#userModal').data('is_admin', isAdmin);
+                $('#userModal').modal('show');
+              }
+            }
+          });
         }
-      }
-    });
+      });
     }
 </script>
 {% endblock customJS %}

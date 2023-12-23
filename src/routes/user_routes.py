@@ -54,3 +54,10 @@ def delete_user(id):
 def logout():
     logout_user()
     return redirect(url_for('main.login'))
+
+@user_routes.route('/current_user_role')
+def current_user_role():
+    if current_user.is_authenticated:
+        return current_user.role
+    else:
+        return "User not authenticated"
