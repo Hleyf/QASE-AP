@@ -55,9 +55,10 @@ def logout():
     logout_user()
     return redirect(url_for('main.login'))
 
-@user_routes.route('/current_user_role')
+@user_routes.route('/current_user_role_info')
 def current_user_role():
     if current_user.is_authenticated:
-        return current_user.role
+        # return an object with two properties: id and role
+        return jsonify({'id': current_user.id, 'role': current_user.role})
     else:
         return "User not authenticated"

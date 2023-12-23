@@ -131,26 +131,24 @@
       console.log("User ID: " + userId);
       //get logged user 
       $.ajax({
-        url: '/current_user_role',
+        url: '/current_user_role_info',
         type: 'GET',
-        success: function (role) {
-          console.log("Logged user role: " + role);
-
-          var isAdmin = (role === 'admin');
-          console.log("Is Admin: " + isAdmin);
+        success: function (result) {
+          var isAdmin = (result.role === 'admin');
+          var isSelf = (result.id === userId);
 
           // Add your logic here to handle the modal opening
           $.ajax({
             url: '/users/' + userId + '/json',
             type: 'GET',
             success: function (result) {
-              console.log("GET request was successful");
               if (result) {
                 console.log(result);
                 // Pass user and isEdit to the modalFile
                 $('#userModal').data('user', result);
                 $('#userModal').data('is_admin', isAdmin);
                 $('#userModal').data('is_edit', false);
+                $('#userModal').data('is_self', isSelf);
                 $('#userModal').modal('show');
               }
             }
