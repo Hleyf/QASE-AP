@@ -135,7 +135,7 @@
         type: 'GET',
         success: function (result) {
           var isAdmin = (result.role === 'admin');
-          var isSelf = (result.id === userId);
+          var isSelf = (result.id === parseInt(userId));
 
           // Add your logic here to handle the modal opening
           $.ajax({
