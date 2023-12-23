@@ -14,9 +14,32 @@
             <input type="text" class="form-control" id="username" name="username" required>
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" name="email" required>
         </div>
+        <div class="form-group">
+            <label for="password">password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+    
+            <label for="confirm">confirm_password</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+        </div>
+        <div class="form-group">
+            <label for="full_name">full_name</label>
+            <input type="text" class="form-control" id="full_name" name="full_name" required>
+        </div>
+        {% if is_admin %}
+        <div class="form-group">
+            <label for="role">User Role</label>
+            <div>
+                <select name="role" id="role" class="form-control" required>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+        </div>
+        {% endif %}
+
         </div>
         <div class="modal-footer">
           {% if is_edit %}
@@ -39,16 +62,54 @@
 <script>
   $(document).ready(function() {
     $('#userModal').on('shown.bs.modal', function () {    
-      // alert('Modal is successfully shown!');
       var user = $('#userModal').data('user');
       var is_admin = $('#userModal').data('is_admin');
-      console.log('user:',user);
-      console.log('admin:',is_admin);
+      var is_edit = $('#userModal').data('is_edit');
       $('#username').val(user.user_name);
       $('#email').val(user.email);
-      setEditMode(is_admin);
-      // Set the values of other fields as needed
-  })
+      $('#full_name').val(user.full_name);
+      $('#role').val(user.role);
+      setEditMode(is_edit);
+  });
+  $('#password, #confirm_password').on('keyup', function () {
+        var password = $('#password').val();
+        var confirmPassword = $('#confirm_password').val();
+
+        if (password == '' || confirmPassword == '') {
+            $('#message').html('').css('color', 'none');
+            $('#registerButton').prop('disabled', true);
+        } else if (password == confirmPassword) {
+            $('#message').html('Passwords match').css('color', 'green');
+            $('#registerButton').prop('disabled', false);
+        } else {
+            $('#message').html("Passwords don't match").css('color', 'red');
+            $('#registerButton').prop('disabled', true);
+        }
+    });
+    //Email validation to know if the email is already registered
+    $('#email').on('keyup', function () {
+        //check if #email is a valid format before continue
+        var email = $('#email').val();
+        var emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+        if(emailRegex.test(email)){   
+            $.ajax({
+                url: `/user/${email}`,
+                type: 'GET',
+                success: function (response) {
+                    console.log('before: ',response)
+                    // if the response is a number, it means that the email is already registered
+                    if (response === 'exist') {
+                        console.log('after: ', response);
+                        $('#message').html('Email already exists').css('color', 'red');
+                        $('#registerButton').prop('disabled', true);
+                    } else {
+                        $('#message').html('').css('color', 'none');
+                        $('#registerButton').prop('disabled', false);
+                    }
+                }
+            });
+        }
+    });
 });
 
   function setEditMode(value) {
@@ -64,23 +125,11 @@
   form.action = is_edit ? '/update_user' : '/create_user'; // Replace with the correct URLs
 
   // Update the form fields
-  var formFields = document.querySelectorAll('#userModal form input');
-  formFields.forEach(function(field) {
+  var formInputs = document.querySelectorAll('#userModal form input');
+  formInputs.forEach(function(field) {
     field.readOnly = !is_edit;
   });
-
-  // // Update the modal footer
-  // var modalFooter = document.querySelector('#userModal .modal-footer');
-  // if (is_edit) {
-  //   modalFooter.innerHTML = `
-  //     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-  //     <button type="submit" class="btn btn-primary">Save changes</button>
-  //   `;
-  // } else {
-  //   modalFooter.innerHTML = `
-  //     <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-  //     <button type="button" class="btn btn-primary" onclick="setEditMode(true)">Edit</button>
-  //   `;
-  // }
+  var formSelect = document.querySelector('#userModal form select');
+  formSelect.disabled = !is_edit;
 }
 </script>
