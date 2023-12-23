@@ -1,36 +1,43 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
-<nav class="navbar navbar-expand-lg ftco_navbar ftco-navbar-light" id="ftco-navbar">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<nav
+  class="navbar navbar-expand-lg ftco_navbar ftco-navbar-light"
+  id="ftco-navbar"
+>
   <div class="container">
-  <a class="navbar-brand" href="/home">Logo</a>
-  <div>
-  <ul class="navbar-nav ml-auto mr-md-3">
-  <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
-  <li class="nav-item"><a href="/users" class="nav-link">Users</a></li>
-  <li class="nav-item"><a href="/tasks" class="nav-link">Tasks</a></li>
-  <li class="nav-item"><a href="#" class="nav-link">Products</a></li>
-  <li class="nav-item"><a href="#" class="nav-link">Log Out</a></li>
-  <li class="dropdown nav-item d-md-flex align-items-center">
-  <a href="#" class="dropdown-toggle nav-link d-flex align-items-center justify-content-center icon-cart p-0" id="dropdown04" data-toggle="dropdown" aria-expanded="false">
-  <i class="fa fa-shopping-cart"></i>
-  </a>
-  </li>
-  </ul>
+    <a class="navbar-brand" href="/home">Logo</a>
+    <div>
+      <ul class="navbar-nav ml-auto mr-md-3">
+        <li class="nav-item"><a href="/home" id="home" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/users" id="users" class="nav-link">Users</a></li>
+        <li class="nav-item"><a href="/tasks" id="tasks" class="nav-link">Tasks</a></li>
+        <li class="nav-item"><a href="/logout" id="logout" class="nav-link">Log Out</a></li>
+      </ul>
+    </div>
   </div>
-  </div>
-  </nav>
-  {% block customJS %}
+</nav>
   <script>
-    window.onload = function() {
-      var activeLink = localStorage.getItem('activeLink');
-      if (activeLink) {
-        document.querySelector(activeLink).classList.add('active');
-      }
-    };
-
-    document.querySelectorAll('.nav-item').forEach(link => {
-      link.addEventListener('click', function() {
-        localStorage.setItem('activeLink', '.nav-item[href="' + this.getAttribute('href') + '"]');
+    $(document).ready(function () {
+      var navItems = $(".nav-item");
+      var currentUrl = window.location.href;
+  
+      // Remove 'active' class from all nav items
+      navItems.removeClass("active");
+  
+      // Loop through all nav items
+      navItems.each(function (index, elem) {
+        if (!elem.firstChild.id) return;
+        var navItemId = elem.firstChild.id;
+  
+        if (currentUrl.indexOf(navItemId) !== -1) {
+          $(this).addClass("active");
+          return false; // Exit the loop
+        }
       });
+  
+      // If no nav item matches, set the 'Home' nav item as the default active item. This is mainly used for after logging.
+      if ($(".nav-item.active").length === 0) {
+        $('.nav-item:contains("Home")').addClass("active");
+      }
     });
   </script>
-   {% endblock %}
