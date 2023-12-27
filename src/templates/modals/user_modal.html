@@ -125,25 +125,26 @@
 });
 
   function setEditMode(value) {
-  var is_edit = value;
+  var isEdit = value;
+  var isSelf = $('#userModal').data('is_self');
 
   // Update the modal title
   var modalTitle = document.getElementById('userModalLabel');
-  modalTitle.textContent = is_edit ? 'Edit User' : 'Create User';
+  modalTitle.textContent = isEdit ? 'Edit User' : 'Create User';
 
   // Update the form action
   var form = document.querySelector('#userModal form');
-  form.action = is_edit ? '/update_user' : '/create_user';
+  form.action = isEdit ? '/update_user' : '/create_user';
 
   // Update the form fields
   var formInputs = document.querySelectorAll('#userModal form input');
   formInputs.forEach(function(field) {
-    field.readOnly = !is_edit;
+    field.readOnly = !isEdit;
   });
   var formSelect = document.querySelector('#userModal form select');
-  formSelect.disabled = !is_edit;
+  formSelect.disabled = !isEdit;
 
-  if(is_edit) {
+  if(isEdit && isSelf) {
     $('#passwordFields').show();
   } else {
     $('#passwordFields').hide();
