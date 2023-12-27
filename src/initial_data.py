@@ -2,8 +2,9 @@
 from datetime import datetime
 from models import db
 from werkzeug.security import generate_password_hash
-from models import User
+from models import User, Task
 from faker import Faker
+from services import user_service
 
 def create_admin():
     admin = User.query.filter_by(email='admin@admin.com').first()
@@ -42,3 +43,36 @@ def create_users():
             user.password = hashed_password
             db.session.add(user)
         db.session.commit()
+        
+def create_tasks():
+    if not len(Task.query.all()) == 0:
+        raise Exception("Tasks already exist in the database")
+
+    max_id = user_service.get_max_id()
+    if max_id == 0:
+        raise Exception("No users found in the database")
+    
+    fake = Faker()
+    # generate 30 random tasks and adds them to the database
+    for i in range(30):
+        # generates a random user id between 1 and the max id in the database
+        user_id = fake.random_int(min=1, max=max_id)
+        # looks for the user with the generated id
+        user = User.query.get(user_id)
+        # while the user is None, it generates a new id
+        while user is None:
+            user_id = fake.random_int(min=1, max=max_id)
+            user = User.query.get(user_id)
+        # creates the task with the user found
+        task = Task(
+            title=fake.sentence(),
+            description=fake.text(),
+            status='pending',
+            user=user,
+            created_by=user,  
+            updated_by=user,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        db.session.add(task)
+    db.session.commit()
