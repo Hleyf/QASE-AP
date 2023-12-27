@@ -120,3 +120,13 @@ class UserService:
             return 'exist'
         except Exception as e:
             raise e
+        
+    @classmethod
+    def get_max_id(cls):
+        try:
+            user = User.query.order_by(User.id.desc()).first()
+            if(user is None):
+                return 0
+            return user.id
+        except Exception as e:
+            raise e
