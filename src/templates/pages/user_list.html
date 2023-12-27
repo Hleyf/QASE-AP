@@ -34,7 +34,7 @@
       <td>{{user.email}}</td>
       <td>{{user.role}}</td>
       <td>
-        <button type="button" class="btn btn-primary" id="openEditModalButton"
+        <button type="button" class="btn btn-primary"
           onclick="openViewModal('{{user.id}}')">View</button>
         {% if is_admin %}
         <a href="{{ url_for('user_routes.delete_user', id=user.id )}}" class="btn btn-danger delete-btn">Delete</a>
@@ -102,28 +102,6 @@
       });
     });
   });
-  // Add event listener for the "Edit" button 
-  // document.getElementById('openEditModalButton').addEventListener('click', function () {
-  //   var userId = this.getAttribute('data-user-id');
-  //   var isEdit = this.getAttribute('data-modal-isEdit') === 'true';
-  //   $.ajax({
-  //     url: '/users/' + userId + '/json',
-  //     type: 'GET',
-  //     success: function (result) {
-  //       console.log("GET request was successful");
-  //       if (result) {
-  //         console.log(result);
-  //         var user = result;
-  //         $('#modalContent').load('modals/user_modal.html', function () {
-  //           // Pass user and isEdit to the modalFile
-  //           $('#modal').data('user', user);
-  //           $('#modal').data('isEdit', isEdit);
-  //           $('#modal').modal('show');
-  //         });
-  //       }
-  //     }
-  //   });
-  // });
 </script>
 <script>
     function openViewModal(userId) {
@@ -131,26 +109,24 @@
       console.log("User ID: " + userId);
       //get logged user 
       $.ajax({
-        url: '/current_user_role',
+        url: '/current_user_role_info',
         type: 'GET',
-        success: function (role) {
-          console.log("Logged user role: " + role);
-
-          var isAdmin = (role === 'admin');
-          console.log("Is Admin: " + isAdmin);
+        success: function (result) {
+          var isAdmin = (result.role === 'admin');
+          var isSelf = (result.id === parseInt(userId));
 
           // Add your logic here to handle the modal opening
           $.ajax({
             url: '/users/' + userId + '/json',
             type: 'GET',
             success: function (result) {
-              console.log("GET request was successful");
               if (result) {
                 console.log(result);
                 // Pass user and isEdit to the modalFile
                 $('#userModal').data('user', result);
                 $('#userModal').data('is_admin', isAdmin);
                 $('#userModal').data('is_edit', false);
+                $('#userModal').data('is_self', isSelf);
                 $('#userModal').modal('show');
               }
             }

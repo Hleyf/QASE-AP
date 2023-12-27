@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
 <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -10,32 +11,43 @@
       <form id="userForm" {% if is_edit %}action="{{ url_for('user_routes.update_user', id=user.id) }}"{% endif %} method="post">
         <div class="modal-body">
           <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <div class="form-element">
+              <label for="full_name">Full Name:</label>
+              <input type="text" class="form-control" id="full_name" name="full_name" required>
+            </div>
+            <div class="form-element">
+              <label for="username">User Name:</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+            </div>
         </div>
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" class="form-control" id="email" name="email" required>
+          <div class="form-element">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
         </div>
-        <div class="form-group" id="passwordFields"style="display: none;">
-            <label for="password">password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-    
-            <label for="confirm">confirm_password</label>
-            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-        </div>
-        <div class="form-group">
-            <label for="full_name">full_name</label>
-            <input type="text" class="form-control" id="full_name" name="full_name" required>
+        <div id="passwordFields"style="display: none;">
+          <div class="form-group">
+            <div class="form-element">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>  
+          </div>
+          <div class="form-group">
+            <div class="form-element">
+              <label for="confirm">Confirm Password:</label>
+              <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+          </div>
         </div>
         {% if is_admin %}
         <div class="form-group">
-            <label for="role">User Role</label>
-            <div>
-                <select name="role" id="role" class="form-control" required>
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                </select>
+          <div class="form-element">
+            <label for="role">User Role:</label>
+            <select name="role" id="role" class="form-control" required>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
             </div>
         </div>
         {% endif %}
@@ -113,25 +125,26 @@
 });
 
   function setEditMode(value) {
-  var is_edit = value;
+  var isEdit = value;
+  var isSelf = $('#userModal').data('is_self');
 
   // Update the modal title
   var modalTitle = document.getElementById('userModalLabel');
-  modalTitle.textContent = is_edit ? 'Edit User' : 'Create User';
+  modalTitle.textContent = isEdit ? 'Edit User' : 'Create User';
 
   // Update the form action
   var form = document.querySelector('#userModal form');
-  form.action = is_edit ? '/update_user' : '/create_user';
+  form.action = isEdit ? '/update_user' : '/create_user';
 
   // Update the form fields
   var formInputs = document.querySelectorAll('#userModal form input');
   formInputs.forEach(function(field) {
-    field.readOnly = !is_edit;
+    field.readOnly = !isEdit;
   });
   var formSelect = document.querySelector('#userModal form select');
-  formSelect.disabled = !is_edit;
+  formSelect.disabled = !isEdit;
 
-  if(is_edit) {
+  if(isEdit && isSelf) {
     $('#passwordFields').show();
   } else {
     $('#passwordFields').hide();
