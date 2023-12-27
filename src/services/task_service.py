@@ -21,8 +21,7 @@ class TaskService:
     @classmethod
     def get_task_by_id(cls, task_id):
         try:
-            task = Task.query.get(task_id)
-            return task
+            return Task.query.get(task_id)
         except Exception as e:
             raise e
     
