@@ -73,6 +73,7 @@
   {% endblock content %}
   {% block customJS %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
     //We need to use AJAX to send a DELETE request to the server since forms only support GET and POST
     $(document).ready(function() {
@@ -111,9 +112,7 @@
     }
     
     function openViewModal(taskId) {
-      console.log("Edit button clicked");
-      console.log("User ID: " + taskId);
-      //get logged user 
+      // get task by id
       $.ajax({
         url: '/current_user_role_info',
         type: 'GET',
@@ -124,7 +123,6 @@
             type: 'GET',
             success: function (result) {
               if (result) {
-                console.log(result);
                 $('#taskModal').data('task', result);
                 $('#taskModal').modal('show');
               }
