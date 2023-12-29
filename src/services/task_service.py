@@ -1,5 +1,5 @@
 from datetime import datetime
-from models.task import Task
+from models import Task, User
 from models import db
 from flask_login import current_user
 from flask import request
@@ -37,14 +37,17 @@ class TaskService:
             raise e
     
     @classmethod
-    def update_task(cls, task):
+    def update_task(cls, task_id):
         try:
-            task_db = Task.query.get(task.id)
-            task_db.title = task.title
-            task_db.description = task.description
-            task_db.updated_at = datetime.now()
-            task_db.updated_by = current_user.user_name
+            task = Task.query.get(task_id)
+            user = User.query.get(request.form['user'])
+            task.title = request.form['title'] if request.form['title'] not in ('', None) else task.title
+            task.description = request.form['description'] if request.form['description'] not in ('', None) else task.description
+            task.user = user if user else None
+            task.updated_at = datetime.now()
+            task.updated_by = current_user
             db.session.commit()
+            return task_id
         except Exception as e:
             db.session.rollback()
             raise e
