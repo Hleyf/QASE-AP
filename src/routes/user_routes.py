@@ -19,8 +19,8 @@ def users():
 @login_required
 def get_user_as_json(id):
     user = service.get_user_by_id(int(id))
-    loquesea = jsonify(user.to_dict())
-    return loquesea
+    return jsonify(user.to_dict())
+
 #Get method to return user.id by email
 @user_routes.route('/user/<email>', methods=['GET'])
 @login_required

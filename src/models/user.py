@@ -1,11 +1,13 @@
+from ast import List
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash,generate_password_hash
 from extensions import db
+from models.task import Task
 
 class User(db.Model, UserMixin):
-    __tablename__ = "user"
+    __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_name = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False, unique=False)
     full_name = db.Column(db.String, nullable=False, unique=False)
@@ -15,10 +17,8 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, nullable=False, unique=False)
     updated_by = db.Column(db.Integer, nullable=True, unique=False) 
     updated_at = db.Column(db.DateTime, nullable=True, unique=False)
-    tasks = db.relationship('Task', backref='user', lazy=True)
 
-    
-    
+
     def __repr__(self):
         return '<User %r>' % self.user_name
 

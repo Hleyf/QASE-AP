@@ -20,6 +20,15 @@
         background-color: transparent !important;
     }
 
-    /* .form-group > input[type="text"], form-group > input[type="email"], .form-group > input[type="password"]{
-        padding-left: 10px;
-    } */
+.status-box {
+    max-width: 25%;
+}
+
+.description-box {
+    height: 15rem;
+}
+
+.close{
+    background: transparent;
+    border: transparent;
+}

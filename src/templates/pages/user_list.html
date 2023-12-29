@@ -69,12 +69,12 @@
 
     <div class="pagination">
       {% if users.has_prev %}
-      <a href="{{ url_for('user_routes.users', page=users.prev_num, sort=request.args.get('sort'), order=request.args.get('order')) }}"
+      <a href="{{ url_for('user_routes.users', page=users.prev_num, sort=request.args.get('sort'), order=request.args.get('order'), per_page=request.args.get('per_page')) }}"
         style="text-decoration: none; color: inherit;"> Previous&nbsp; </a>
       {% endif %}
       <span>Page {{ users.page }} of {{ users.pages }}</span>
       {% if users.has_next %}
-      <a href="{{ url_for('user_routes.users', page=users.next_num, sort=request.args.get('sort'), order=request.args.get('order')) }}"
+      <a href="{{ url_for('user_routes.users', page=users.next_num, sort=request.args.get('sort'), order=request.args.get('order'), per_page=request.args.get('per_page')) }}"
         style="text-decoration: none; color: inherit;"> &nbsp;Next </a>
       {% endif %}
     </div>
@@ -115,14 +115,12 @@
           var isAdmin = (result.role === 'admin');
           var isSelf = (result.id === parseInt(userId));
 
-          // Add your logic here to handle the modal opening
           $.ajax({
             url: '/users/' + userId + '/json',
             type: 'GET',
             success: function (result) {
               if (result) {
                 console.log(result);
-                // Pass user and isEdit to the modalFile
                 $('#userModal').data('user', result);
                 $('#userModal').data('is_admin', isAdmin);
                 $('#userModal').data('is_edit', false);

@@ -22,93 +22,114 @@
     </thead>
     <tbody>
         {% for task in tasks %}
-        <tr data-toggle="modal" data-target="#taskModal" onclick="setModalMode(true, task)">
+        <tr data-toggle="modal" data-target="#taskModal">
           <th scope="row">{{task.id}}</th>
-          <td>{{task.title}}</td>
+          <td class="task-title"><span>{{task.title}}</span></td>
           <td>{{task.status}}</td>
           <td>{{task.user_name}}</td>
-          <td>{{task.created_at}}</td>
+          <td>{{ task.created_at.strftime('%d/%m/%Y') }}</td>
           <td>
-            <a href="/tasks/{{task.id}}/edit" class="btn btn-primary">Edit</a>
+            <button type="button" class="btn btn-primary"
+              onclick="openViewModal('{{task.id}}')">View</button>            
             <a href="{{ url_for('task_routes.delete_task', id=task.id )}}" class="btn btn-danger delete-btn">Delete</a>
           </td>
         </tr>
         {% endfor %}
     </tbody>
   </table>
-  <form method="get" action="{{ url_for('user_routes.users') }}" class="input-group mb-3">
-    <div class="order-select">  
+  <form method="get" action="{{ url_for('task_routes.tasks') }}" class="input-group mb-3">
+    <div class="order-select">
       <span>Order By: </span>
       <select style="margin-left: 1em;" name="sort" onchange="this.form.submit()">
         <option value="id" {% if request.args.get('sort') == 'id' %}selected{% endif %}>Id</option>
         <option value="title" {% if request.args.get('sort') == 'title' %}selected{% endif %}>title</option>
-        <option value="user_name" {% if request.args.get('sort') == 'user_name' %}selected{% endif %}>User Name</option>
-      </select>
+       </select>
     </div>
       <input type="hidden" name="order" value="{{ 'asc' if request.args.get('order') != 'asc' else 'desc' }}">
       <button type="submit" style="background: none; border: none;">
         <i class="{{ 'fas fa-arrow-up' if request.args.get('order') != 'asc' else 'fas fa-arrow-down' }}"></i>
       </button>
-    <div class="list-footer">
-    <div class="custom-select">
-      <span>Page Size: </span>
-      <select style="margin-left: 10px;" name="per_page" onchange="this.form.submit()">
-        <option value="5" {% if request.args.get('per_page') == '5' %}selected{% endif %}>5</option>
-        <option value="10" {% if request.args.get('per_page') == '10' %}selected{% endif %}>10</option>
-        <option value="15" {% if request.args.get('per_page') == '15' %}selected{% endif %}>15</option>
-      </select>
-    </div>
-  
+      <div class="list-footer">
+        <div class="custom-select">
+          <span>Page Size: </span>
+          <select style="margin-left: 10px;" name="per_page" onchange="this.form.submit()">
+            <option value="5" {% if request.args.get('per_page')=='5' %}selected{% endif %}>5</option>
+            <option value="10" {% if request.args.get('per_page')=='10' %}selected{% endif %}>10</option>
+            <option value="15" {% if request.args.get('per_page')=='15' %}selected{% endif %}>15</option>
+          </select>
+        </div>
       <div class="pagination">
         {% if tasks.has_prev %}
-        <a href="{{ url_for('task_routes.tasks', page=tasks.prev_num, sort=request.args.get('sort'), order=request.args.get('order')) }}" style="text-decoration: none; color: inherit;"> Previous&nbsp; </a>
+        <a href="{{ url_for('task_routes.tasks', page=tasks.prev_num, sort=request.args.get('sort'), order=request.args.get('order'), per_page=request.args.get('per_page')) }}" style="text-decoration: none; color: inherit;"> Previous&nbsp; </a>
         {% endif %}
         <span>Page {{ tasks.page }} of {{ tasks.pages }}</span>
         {% if tasks.has_next %}
-        <a href="{{ url_for('task_routes.tasks', page=tasks.next_num, sort=request.args.get('sort'), order=request.args.get('order')) }}" style="text-decoration: none; color: inherit;"> &nbsp;Next </a>
+        <a href="{{ url_for('task_routes.tasks', page=tasks.next_num, sort=request.args.get('sort'), order=request.args.get('order'), per_page=request.args.get('per_page')) }}" style="text-decoration: none; color: inherit;"> &nbsp;Next </a>
         {% endif %}
       </div>
     </div>
   </form>
+  {% include 'modals/task_modal.html' %}
+  {% endblock content %}
+  {% block customJS %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-  //We need to use AJAX to send a DELETE request to the server since forms only support GET and POST
-$(document).ready(function() {
-    $('.delete-btn').click(function(e) {
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    //We need to use AJAX to send a DELETE request to the server since forms only support GET and POST
+    $(document).ready(function() {
+      $('.delete-btn').click(function(e) {
         e.preventDefault();
         $.ajax({
-            url: $(this).attr('href'),
-            type: 'DELETE',
-            success: function(result) {
-              console.log("DELETE request was successful");
-              if(result.success){
-                location.reload();
+          url: $(this).attr('href'),
+          type: 'DELETE',
+          success: function(result) {
+            console.log("DELETE request was successful");
+            if(result.success){
+              location.reload();
+            }
+          }
+        });
+      });
+    });
+    
+    function setModalMode(isEdit, task = null) {
+      
+      if (task) {
+        document.getElementById('task_id').value = task.id;
+        document.getElementById('task_name').value = task.name;
+        document.getElementById('task_description').value = task.description;
+        document.getElementById('task_status').value = task.status;
+        document.getElementById('task_user').value = task.user;
+        
+      } else {
+        // Si es modo de creación, limpia los valores del formulario
+        document.getElementById('task_id').value = '';
+        document.getElementById('task_name').value = '';
+        document.getElementById('task_description').value = '';
+        document.getElementById('task_status').value = '';
+        document.getElementById('task_user_name').value = '';
+      }
+    }
+    
+    function openViewModal(taskId) {
+      // get task by id
+      $.ajax({
+        url: '/current_user_role_info',
+        type: 'GET',
+        success: function (result) {
+          
+          $.ajax({
+            url: '/tasks/' + taskId + '/json',
+            type: 'GET',
+            success: function (result) {
+              if (result) {
+                $('#taskModal').data('task', result);
+                $('#taskModal').modal('show');
               }
             }
-        });
-    });
-});
-
-function setModalMode(isEdit, task = null) {
-  // Cambia el modo del modal
-  document.getElementById('is_edit').value = isEdit;
-
-  // Si es modo de edición, establece los valores del formulario
-  if (isEdit && task) {
-    document.getElementById('task_id').value = task.id;
-    document.getElementById('task_name').value = task.name;
-    document.getElementById('task_description').value = task.description;
-    document.getElementById('task_status').value = task.status;
-    document.getElementById('task_user_name').value = task.name;
-
-  } else {
-    // Si es modo de creación, limpia los valores del formulario
-    document.getElementById('task_id').value = '';
-    document.getElementById('task_name').value = '';
-    document.getElementById('task_description').value = '';
-    document.getElementById('task_status').value = '';
-    document.getElementById('task_user_name').value = '';
-  }
-}
-</script>
-{% endblock content %}
+          });
+        }
+      });
+    }
+  </script>
+{% endblock customJS %}

@@ -16,3 +16,12 @@
   border-radius: 50px;
   cursor: pointer;
   }
+
+  .task-title{
+    text-align: left;
+  }
+
+    .task-title > span{
+      margin-left: 1em;
+      padding: 10px;
+    }

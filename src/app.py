@@ -35,9 +35,10 @@ def create_app():
     with app.app_context():
         db.create_all()
         # Create the initial admin user
-        from initial_data import create_admin, create_users
+        from initial_data import create_admin, create_users, create_tasks
         create_admin()
         create_users()
+        create_tasks()
         
     app.register_blueprint(main_routes)
     app.register_blueprint(user_routes)
