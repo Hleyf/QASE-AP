@@ -27,3 +27,8 @@
 .description-box {
     height: 15rem;
 }
+
+.close{
+    background: transparent;
+    border: transparent;
+}
