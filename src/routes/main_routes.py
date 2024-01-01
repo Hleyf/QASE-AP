@@ -1,6 +1,6 @@
 from datetime import datetime
-from flask import Blueprint, jsonify, render_template, request, redirect, url_for, session, current_app
-from flask_login import login_required, current_user, login_user
+from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
+from flask_login import login_required, current_user, login_user, logout_user
 from models import User
 from services import UserService
 
@@ -51,10 +51,18 @@ def register():
     is_admin = current_user is not None and current_user.is_authenticated and current_user.role == 'admin'
     return render_template('auth/register.html', is_admin=is_admin)
 
+@main_routes.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.login'))
+
 @main_routes.route('/home')
 @login_required
 def home():
     return render_template('pages/home.html')
+
+
     
 
 

@@ -116,7 +116,7 @@
           var isSelf = (result.id === parseInt(userId));
 
           $.ajax({
-            url: '/users/' + userId + '/json',
+            url: '/user/' + userId + '/json',
             type: 'GET',
             success: function (result) {
               if (result) {

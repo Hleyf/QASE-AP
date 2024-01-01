@@ -1,8 +1,9 @@
 from datetime import datetime
 from flask_login import current_user
 from models import db, User
-from flask import request
+from flask import request, current_app as app
 from werkzeug.security import generate_password_hash
+
 
 class UserService:
 
@@ -129,4 +130,17 @@ class UserService:
                 return 0
             return user.id
         except Exception as e:
+            raise e
+        
+    @classmethod
+    def search_users(cls, term, page, per_page):
+        try:
+            users = []
+            if term:
+                users = User.query.filter((User.full_name.ilike(f"%{term}%")) | (User.user_name.ilike(f"%{term}%"))).paginate(page=page, per_page=per_page, error_out=False).items
+            else: 
+                users = User.query.paginate(page=page, per_page=per_page, error_out=False).items
+            return users
+        except Exception as e:
+            app.logger.error(f"Error while searching users: {e}")
             raise e
