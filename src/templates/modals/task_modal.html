@@ -89,24 +89,27 @@ href="{{ url_for('static', filename='css/modal.css') }}"
       var task = $("#taskModal").data("task");
       $("#title").val(task.title);
       $("#description").val(task.description);
-      $("#user").val(task.user);
       $("#status").val(task.status);
-
       // set the action of the form to the correct url once the user is provided 
       document.getElementById('taskForm').action = "/task/" + task.id + "/update";      
     
       $.getJSON("/users/search", function (data) {
-        console.log('data: ',data);
         var $userSelect = $("#user");
         $userSelect.empty();
-        console.log('$userSelect: ',$userSelect);
         $.each(data.items, function (key, user) {
           $userSelect.append($("<option>").val(user.id).text(user.full_name));
         });
-        console.log('$userSelect out: ',$userSelect);
+        $("#user").val(task.user?.id); //FIXME: set the selected value is not displaying correctly even when the value is set correctly, this will require further investigation.
         $('.selectpicker').selectpicker('refresh');
+
       });
+
+      $('#user').on('change', function() {
+    var selectedValue = $(this).val();
+    console.log(selectedValue);
+  });
     });
+
 
   });
 

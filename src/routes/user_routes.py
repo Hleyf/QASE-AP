@@ -16,11 +16,14 @@ def users():
 
     return render_template('pages/user_list.html', users=users, is_admin=is_admin, logged_user_id=current_user.id)
 
-@user_routes.route('/users/<id>/json', methods=['GET'])
+@user_routes.route('/user/<int:id>/json', methods=['GET'])
 @login_required
 def get_user_as_json(id):
-    user = service.get_user_by_id(int(id))
-    return jsonify(user.to_dict())
+    user = UserService.get_user_by_id(id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+    else:
+        return jsonify(user.to_dict()), 200
 
 #Get method to return user.id by email
 @user_routes.route('/user/<email>', methods=['GET'])
@@ -58,12 +61,6 @@ def create_new_user():
 def delete_user(id):
     UserService.delete_user(id)
     return jsonify({'success': True})
-
-@user_routes.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('main.login'))
 
 @user_routes.route('/current_user_role_info')
 def current_user_role():

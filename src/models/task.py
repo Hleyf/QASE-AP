@@ -27,7 +27,7 @@ class Task(db.Model):
             'title': self.title,
             'description': self.description,
             'status': self.status,
-            'user': {'id': self.user.id, 'user_name': self.user.user_name} if self.user else None,
+            'user': {'id': self.user.id, 'user_name': self.user.user_name, 'full_name': self.user.full_name, 'email': self.user.email} if self.user else None,
             'created_by': {'id': self.created_by.id, 'user_name': self.created_by.user_name} if self.created_by else None,
             'created_at': self.created_at,
             'updated_by': {'id': self.updated_by.id, 'user_name': self.updated_by.user_name} if self.updated_by else None,

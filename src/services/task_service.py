@@ -40,9 +40,10 @@ class TaskService:
     def update_task(cls, task_id):
         try:
             task = Task.query.get(task_id)
-            user = User.query.get(request.form['user'])
+            user = User.query.get(request.form['user']) # At this point, the user field is the user id from the form       
             task.title = request.form['title'] if request.form['title'] not in ('', None) else task.title
             task.description = request.form['description'] if request.form['description'] not in ('', None) else task.description
+            task.status = request.form['status'] if request.form['status'] not in ('', None) else task.status
             task.user = user if user else None
             task.updated_at = datetime.now()
             task.updated_by = current_user
