@@ -1,9 +1,10 @@
 
 
-from flask import Blueprint, jsonify, redirect, render_template, url_for
-from flask_login import login_required
+from datetime import datetime
+from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 from services import TaskService
-
+from models import Task
 
 task_routes = Blueprint('task_routes', __name__)
 service = TaskService()
@@ -29,13 +30,21 @@ def update_task(id):
 
 
 
-@task_routes.route('/tasks/create', methods=['POST'])
+@task_routes.route('/task/create', methods=['POST'])
 @login_required
 def create_task():
-    task = service.create_task()
-    if task.id:
-        return jsonify({'success': True})
-    return jsonify({'success': False})
+    user_id = int(request.form.get('user')) if request.form.get('user') else None
+    task = Task(
+        title=request.form.get('title'),
+        description=request.form.get('description'),
+        status=request.form.get('status'),
+        user_id=user_id
+    )
+    task_id = service.create_task(task)
+    if task_id:
+        return redirect(url_for('task_routes.tasks'))
+    else:
+        return render_template('pages/task_modal.html', error="Invalid credentials")
 
 @task_routes.route('/tasks/<id>/delete', methods=['DELETE'])
 @login_required
