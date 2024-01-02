@@ -5,7 +5,7 @@
 {% endblock customCSS %}
 {% block content %}
 <div style="display: grid; justify-content: right; position: relative; top: 2em;">
-  <button onclick="window.location.href='/register'" class="btn btn-success add-btn">
+  <button onclick="openViewModal(null, false)" class="btn btn-success add-btn">
     <i class="fas fa-plus"></i>
   </button>
   </div>
@@ -30,7 +30,7 @@
           <td>{{ task.created_at.strftime('%d/%m/%Y') }}</td>
           <td>
             <button type="button" class="btn btn-primary"
-              onclick="openViewModal('{{task.id}}')">View</button>            
+              onclick="openViewModal('{{task.id}}', true)">View</button>            
             <a href="{{ url_for('task_routes.delete_task', id=task.id )}}" class="btn btn-danger delete-btn">Delete</a>
           </td>
         </tr>
@@ -95,44 +95,32 @@
       });
     });
     
-    function setModalMode(isEdit, task = null) {
-      
-      if (task) {
-        document.getElementById('task_id').value = task.id;
-        document.getElementById('task_name').value = task.name;
-        document.getElementById('task_description').value = task.description;
-        document.getElementById('task_status').value = task.status;
-        document.getElementById('task_user').value = task.user;
-        
-      } else {
-        // Si es modo de creación, limpia los valores del formulario
-        document.getElementById('task_id').value = '';
-        document.getElementById('task_name').value = '';
-        document.getElementById('task_description').value = '';
-        document.getElementById('task_status').value = '';
-        document.getElementById('task_user_name').value = '';
-      }
-    }
-    
-    function openViewModal(taskId) {
-      // get task by id
-      $.ajax({
-        url: '/current_user_role_info',
-        type: 'GET',
-        success: function (result) {
-          
-          $.ajax({
-            url: '/tasks/' + taskId + '/json',
-            type: 'GET',
-            success: function (result) {
-              if (result) {
-                $('#taskModal').data('task', result);
-                $('#taskModal').modal('show');
+    function openViewModal(taskId, isEdit = false) {
+      if(isEdit){
+        // get task by id
+        $.ajax({
+          url: '/current_user_role_info',
+          type: 'GET',
+          success: function (result) {
+            
+            $.ajax({
+              url: '/task/' + taskId + '/json',
+              type: 'GET',
+              success: function (result) {
+                if (result) {
+                  $('#taskModal').data('task', result);
+                  $('#taskModal').modal('show');
+                }
               }
-            }
-          });
-        }
-      });
+            });
+          }
+        });
+
+      }else{
+        $('#taskModal').data('task', null);
+        $('#taskModal').data('isEdit', isEdit);
+        $('#taskModal').modal('show');
+      }
     }
   </script>
 {% endblock customJS %}

@@ -29,9 +29,10 @@ class TaskService:
     def create_task(cls, task):
         try:
             task.created_at = datetime.now()
-            task.created_by = current_user.user_name
-            db.session.add(task)
+            task.created_by = current_user
+            new_task = db.session.add(task)
             db.session.commit()
+            return task.id
         except Exception as e:
             db.session.rollback()
             raise e
@@ -40,10 +41,10 @@ class TaskService:
     def update_task(cls, task_id):
         try:
             task = Task.query.get(task_id)
-            user = User.query.get(request.form['user']) # At this point, the user field is the user id from the form       
-            task.title = request.form['title'] if request.form['title'] not in ('', None) else task.title
-            task.description = request.form['description'] if request.form['description'] not in ('', None) else task.description
-            task.status = request.form['status'] if request.form['status'] not in ('', None) else task.status
+            user = User.query.get(request.form.get('user')) # At this point, the user field is the user id from the form       
+            task.title = request.form.get('title') if request.form.get('title') not in ('', None) else task.title
+            task.description = request.form.get('description') if request.form.get('description') not in ('', None) else task.description
+            task.status = request.form.get('status') if request.form.get('status') not in ('', None) else task.status
             task.user = user if user else None
             task.updated_at = datetime.now()
             task.updated_by = current_user

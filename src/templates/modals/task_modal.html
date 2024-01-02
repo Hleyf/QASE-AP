@@ -86,12 +86,18 @@ href="{{ url_for('static', filename='css/modal.css') }}"
 <script>
   $(document).ready(function () {
     $("#taskModal").on("shown.bs.modal", function () {
-      var task = $("#taskModal").data("task");
-      $("#title").val(task.title);
-      $("#description").val(task.description);
-      $("#status").val(task.status);
+      const task = $("#taskModal").data("task");
+      const isEdit = $("#taskModal").data("is-edit"); 
+      $("#title").val(task?.title);
+      $("#description").val(task?.description);
+      $("#status").val(task?.status);
+      $("#is_edit").val(isEdit);
+      if(isEdit){
+        document.getElementById('taskForm').action = "/task/" + task.id + "/update";      
+      }else {
+        document.getElementById('taskForm').action = "/task/create";
+      }
       // set the action of the form to the correct url once the user is provided 
-      document.getElementById('taskForm').action = "/task/" + task.id + "/update";      
     
       $.getJSON("/users/search", function (data) {
         var $userSelect = $("#user");
