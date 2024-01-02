@@ -95,25 +95,6 @@
       });
     });
     
-    // function setModalMode(isEdit, task = null) {
-      
-    //   if (task) {
-    //     document.getElementById('task_id').value = task.id;
-    //     document.getElementById('task_name').value = task.name;
-    //     document.getElementById('task_description').value = task.description;
-    //     document.getElementById('task_status').value = task.status;
-    //     document.getElementById('task_user').value = task.user;
-        
-    //   } else {
-    //     // Si es modo de creación, limpia los valores del formulario
-    //     document.getElementById('task_id').value = '';
-    //     document.getElementById('task_name').value = '';
-    //     document.getElementById('task_description').value = '';
-    //     document.getElementById('task_status').value = '';
-    //     document.getElementById('task_user_name').value = '';
-    //   }
-    // }
-    
     function openViewModal(taskId, isEdit = false) {
       if(isEdit){
         // get task by id
@@ -123,7 +104,7 @@
           success: function (result) {
             
             $.ajax({
-              url: '/tasks/' + taskId + '/json',
+              url: '/task/' + taskId + '/json',
               type: 'GET',
               success: function (result) {
                 if (result) {

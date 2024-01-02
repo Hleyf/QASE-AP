@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import Blueprint, jsonify, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
+from flask_login import login_required
 from services import TaskService
 from models import Task
 
@@ -15,7 +15,7 @@ def tasks():
     tasks = service.get_tasks()
     return render_template('pages/task_list.html', tasks=tasks)
 
-@task_routes.route('/tasks/<id>/json', methods=['GET'])
+@task_routes.route('/task/<id>/json', methods=['GET'])
 @login_required
 def get_task_as_json(id):
     task = service.get_task_by_id(int(id))
@@ -46,7 +46,7 @@ def create_task():
     else:
         return render_template('pages/task_modal.html', error="Invalid credentials")
 
-@task_routes.route('/tasks/<id>/delete', methods=['DELETE'])
+@task_routes.route('/task/<id>/delete', methods=['DELETE'])
 @login_required
 def delete_task(id):
     service.delete_task(id)
