@@ -142,7 +142,10 @@
     field.readOnly = !isEdit;
   });
   const formSelect = document.querySelector('#userModal form select');
-  formSelect.disabled = !isEdit;
+  if(formSelect){
+    formSelect.disabled = !isEdit;
+
+  }
 
   if(isEdit && isSelf) {
     $('#passwordFields').show();
@@ -154,7 +157,7 @@
   if (isEdit) {
     $('#saveButton').show();
     $('#editButton').hide();
-  } else if (isAdmin) {
+  } else if (isAdmin || isSelf) {
     $('#editButton').show();
     $('#saveButton').hide();
     $('#okButton').hide();

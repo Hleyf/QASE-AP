@@ -22,7 +22,7 @@
     </thead>
     <tbody>
         {% for task in tasks %}
-        <tr data-toggle="modal" data-target="#taskModal">
+        <tr>
           <th scope="row">{{task.id}}</th>
           <td class="task-title"><span>{{task.title}}</span></td>
           <td>{{task.status}}</td>
@@ -109,6 +109,7 @@
               success: function (result) {
                 if (result) {
                   $('#taskModal').data('task', result);
+                  $('#taskModal').data('isEdit', isEdit);
                   $('#taskModal').modal('show');
                 }
               }
