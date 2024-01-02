@@ -19,7 +19,6 @@ href="{{ url_for('static', filename='css/modal.css') }}"
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="task_modalLabel">
-          {% if is_edit %}Edit User{% else %}Create User{% endif %}
         </h5>
         <button
           type="button"
@@ -87,18 +86,23 @@ href="{{ url_for('static', filename='css/modal.css') }}"
   $(document).ready(function () {
     $("#taskModal").on("shown.bs.modal", function () {
       const task = $("#taskModal").data("task");
-      const isEdit = $("#taskModal").data("is-edit"); 
+      const isEdit = $("#taskModal").data("isEdit"); 
+      // set the title of the modal
+      let text = isEdit ? "Edit Task" : "Create Task";
+      document.getElementById('task_modalLabel').innerText = text;
+      // set the values of the form
       $("#title").val(task?.title);
       $("#description").val(task?.description);
       $("#status").val(task?.status);
       $("#is_edit").val(isEdit);
+      // set the action of the form to the correct url once the user is provided
       if(isEdit){
         document.getElementById('taskForm').action = "/task/" + task.id + "/update";      
       }else {
         document.getElementById('taskForm').action = "/task/create";
-      }
-      // set the action of the form to the correct url once the user is provided 
+      } 
     
+      // set the user select options
       $.getJSON("/users/search", function (data) {
         var $userSelect = $("#user");
         $userSelect.empty();

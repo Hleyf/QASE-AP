@@ -30,7 +30,7 @@ class TaskService:
         try:
             task.created_at = datetime.now()
             task.created_by = current_user
-            new_task = db.session.add(task)
+            db.session.add(task)
             db.session.commit()
             return task.id
         except Exception as e:
