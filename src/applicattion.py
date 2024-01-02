@@ -11,28 +11,28 @@ from models import User, Task
 
 #Creating the application through a factory function wlil allow us to create multiple instances of the appnlication  
 def create_app():
-    app = Flask(__name__)
+    applicattion = Flask(__name__)
     # Configuración de la clave secreta
-    app.secret_key = secrets.token_hex(32)
+    applicattion.secret_key = secrets.token_hex(32)
     # Configuración adicional desde el objeto config    
-    app.config.from_object(config['development'])
+    applicattion.config.from_object(config['development'])
     
     # Db configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.root_path}/database.db"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    applicattion.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{applicattion.root_path}/database.db"
+    applicattion.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     
     # Bind the app with db
-    db.init_app(app)
+    db.init_app(applicattion)
     # Loging Manager configuration
     login_manager.login_view = 'main.login'
-    login_manager.init_app(app)
+    login_manager.init_app(applicattion)
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
     
     
-    with app.app_context():
+    with applicattion.app_context():
         db.create_all()
         # Create the initial admin user
         from initial_data import create_admin, create_users, create_tasks
@@ -40,15 +40,15 @@ def create_app():
         create_users()
         create_tasks()
         
-    app.register_blueprint(main_routes)
-    app.register_blueprint(user_routes)
-    app.register_blueprint(task_routes)
+    applicattion.register_blueprint(main_routes)
+    applicattion.register_blueprint(user_routes)
+    applicattion.register_blueprint(task_routes)
 
-    return app
+    return applicattion
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=False)
 
 
     

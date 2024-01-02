@@ -1,5 +1,5 @@
 import pytest
-from app import create_app
+from applicattion import create_app
 from extensions import db
 from models import User
 from datetime import datetime

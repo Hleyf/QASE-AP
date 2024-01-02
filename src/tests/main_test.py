@@ -1,6 +1,6 @@
 import pytest
 from routes import main_routes as main
-from app import create_app 
+from applicattion import create_app 
 from models import User
 from unittest import mock
 
