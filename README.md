@@ -19,7 +19,7 @@ python -m venv .env
 ```
 5. Activate your virtual enviroment
 ```
-./env/Scripts/Activate
+./.env/Scripts/Activate
 ```
 7. Install dependencies using 'requirements.txt'
 ```
@@ -31,6 +31,12 @@ pip install -r requirements.txt
 ``` 
 
 If you wish to run the tests for this project simply run the following: 
+
+To run all the test:
+```
+python -m pytest
+```
+Or you can run the tests individually:
 
 Main tests: Login, Logout and registry tests
 ```
